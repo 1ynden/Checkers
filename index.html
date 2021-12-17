@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkers</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
+    <style>
+      body{
+        font-family: 'Montserrat', sans-serif;
+        background-color: #fff;
+      }
+      .boardbox{
+        width: 920px;
+        height: 920px;
+        background-color: #ad774f;
+        margin: auto;
+      }
+      .checkerboard{
+        width: 98%;
+        margin: auto;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-template-rows: repeat(8, 1fr);
+        grid-gap: 1px;
+        align-items: center;
+        border: 1rem solid #ad774f;
+      }
+      .square{
+        min-height: 112px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+      }
+      .square:nth-child(16n+1),
+      .square:nth-child(16n+3),
+      .square:nth-child(16n+5),
+      .square:nth-child(16n+7),
+      .square:nth-child(16n+10),
+      .square:nth-child(16n+12),
+      .square:nth-child(16n+14),
+      .square:nth-child(16n) {
+          background-color:#e6ed93;
+      }
+      .square:nth-child(16n+2),
+      .square:nth-child(16n+4),
+      .square:nth-child(16n+6),
+      .square:nth-child(16n+8),
+      .square:nth-child(16n+9),
+      .square:nth-child(16n+11),
+      .square:nth-child(16n+13),
+      .square:nth-child(16n+15) {
+          background-color:#ede493;
+      }
+      .square img{
+        width: 90%;
+        margin: auto;
+      }
+      .square:hover{
+        transition-duration: 0.25s;
+        -webkit-transform: scale(1.05);
+    		-moz-transform: scale(1.05);
+    		-ms-transform: scale(1.05);
+    		-o-transform: scale(1.05);
+        -webkit-box-shadow: 0px 0px 15px 5px #ad774f;
+        box-shadow: 0px 0px 15px 5px #ad774f;
+      }
+      .box:not(:hover){
+    		transition-duration: 0.5s;
+    		-webkit-transform: scale(1);
+    		-moz-transform: scale(1);
+    		-ms-transform: scale(1);
+    		-o-transform: scale(1);
+        -webkit-box-shadow: none;
+        box-shadow: nonw;
+	  }
+    </style>
+  </head>
+
+  <body>
+    <nav id="main-nav" class="topnav">
+
+    </nav>
+
+    <main>
+      <div class="boardbox">
+        <div class="checkerboard" id="board">
+
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; 2021 Lynden Millington &nbsp;</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+    <script defer>
+      $(document).ready(function(){
+        var before = 0;
+        var piece = "";
+        var size = 8;
+        king = 0;
+        const pieces = [0, 1, 3, 5, 7, 10, 12, 14];
+        for(let i = 1; i < size*size+1; i++){
+          if(pieces.includes(i%16) && i < (size*size)*3/8){
+            document.getElementById("board").innerHTML += "<div class='square white' id=" + i + "><img src='img/checker2.png'/></div>";
+          }
+          else if(pieces.includes(i%16) && i > (size*size)*5/8){
+            document.getElementById("board").innerHTML += "<div class='square red' id=" + i + "><img src='img/checker1.png'/></div>";
+          }
+          else{
+            document.getElementById("board").innerHTML += "<div class='square' id=" + i + ">&nbsp;</div>";
+          }
+        }
+        $('.square').click(function(){
+          if(this.classList.contains("king")){king=1;}
+          if(this.classList.contains("red")){
+            before = this.id;
+            piece = "red";
+          }
+          else if(this.classList.contains("white")){
+            before = this.id;
+            piece = "white";
+          }
+          else{
+            thisID = parseInt(this.id, 10);
+            prevID = parseInt(before, 10);
+            if(before != 0){
+              if(piece == "red"){
+                if(((thisID+7 === prevID) && (prevID%size != 0)) || ((thisID+9 === prevID) && (prevID%size != 1))){
+                  document.getElementById(before).innerHTML = "&nbsp;";
+                  document.getElementById(before).classList.remove("red");
+                  this.classList.add("red");
+                  this.innerHTML = "<img src='img/checker1.png'/>";
+                  before = 0;
+                  king = 0;
+                  piece = "";
+                }
+                else if(((thisID+14 === prevID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID+7).classList.contains("white"))) || ((thisID+18 === prevID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID+9).classList.contains("white")))){
+                  document.getElementById(prevID-(prevID-thisID)/2).innerHTML = "&nbsp;";
+                  document.getElementById(prevID-(prevID-thisID)/2).classList.remove("white");
+
+                  document.getElementById(before).innerHTML = "&nbsp;";
+                  document.getElementById(before).classList.remove("red");
+                  this.classList.add("red");
+                  this.innerHTML = "<img src='img/checker1.png'/>";
+                  before = 0;
+                  king = 0;
+                  piece = "";
+                }
+              }
+              else if(piece == "white"){
+                if(((prevID+7 === thisID) && (prevID%size != 1)) || ((prevID+9 === thisID) && (prevID%size != 0))){
+                  document.getElementById(before).innerHTML = "&nbsp;";
+                  document.getElementById(before).classList.remove("white");
+                  this.classList.add("white");
+                  this.innerHTML = "<img src='img/checker2.png'/>";
+                  before = 0;
+                  king = 0;
+                  piece = "";
+                }
+                else if(((prevID+14 === thisID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID-7).classList.contains("red"))) || ((prevID+18 === thisID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID-9).classList.contains("red")))){
+                  document.getElementById(thisID-(thisID-prevID)/2).innerHTML = "&nbsp;";
+                  document.getElementById(thisID-(thisID-prevID)/2).classList.remove("red");
+
+                  document.getElementById(before).innerHTML = "&nbsp;";
+                  document.getElementById(before).classList.remove("white");
+                  this.classList.add("white");
+                  this.innerHTML = "<img src='img/checker2.png'/>";
+                  before = 0;
+                  king = 0;
+                  piece = "";
+                }
+              }
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+
+</html>

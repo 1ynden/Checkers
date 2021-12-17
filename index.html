@@ -12,7 +12,8 @@
     <style>
       body{
         font-family: 'Montserrat', sans-serif;
-        background-color: #fff;
+        background-color: #282c34;
+        color: #def;
       }
       .boardbox{
         width: 920px;
@@ -79,6 +80,40 @@
     		-o-transform: scale(1);
         -webkit-box-shadow: none;
         box-shadow: nonw;
+      }
+      .shrink{
+        transition-duration: 0.5s;
+        -webkit-transform: scale(1, 0.01);
+    		-moz-transform: scale(1, 0.01);
+    		-ms-transform: scale(1, 0.01);
+    		-o-transform: scale(1, 0.01);
+      }
+      .grow{
+        transition-duration: 0.5s;
+    		-webkit-transform: scale(1, 1);
+    		-moz-transform: scale(1, 1);
+    		-ms-transform: scale(1, 1);
+    		-o-transform: scale(1, 1);
+      }
+      footer{
+        text-align: center;
+      }
+      .shake{
+        animation: shake 0.5s;
+      }
+      @keyframes shake {
+        0% { transform: translate(1px, 1px) rotate(0deg); }
+        10% { transform: translate(-1px, -2px) rotate(-1deg); }
+        20% { transform: translate(-3px, 0px) rotate(1deg); }
+        30% { transform: translate(3px, 2px) rotate(0deg); }
+        40% { transform: translate(1px, -1px) rotate(1deg); }
+        50% { transform: translate(-1px, 2px) rotate(-1deg); }
+        60% { transform: translate(-3px, 1px) rotate(0deg); }
+        70% { transform: translate(3px, 1px) rotate(-1deg); }
+        80% { transform: translate(-1px, -1px) rotate(1deg); }
+        90% { transform: translate(1px, 2px) rotate(0deg); }
+        100% { transform: translate(1px, -2px) rotate(-1deg); }
+      }
 	  }
     </style>
   </head>
@@ -120,7 +155,6 @@
           }
         }
         $('.square').click(function(){
-          if(this.classList.contains("king")){king=1;}
           if(this.classList.contains("red")){
             before = this.id;
             piece = "red";
@@ -134,49 +168,131 @@
             prevID = parseInt(before, 10);
             if(before != 0){
               if(piece == "red"){
+                if(document.getElementById(prevID).classList.contains("king")){
+                  if(((prevID+7 === thisID) && (prevID%size != 1)) || ((prevID+9 === thisID) && (prevID%size != 0))){
+                    this.classList.add("red", "king");
+                    this.innerHTML = document.getElementById(before).innerHTML;
+
+                    document.getElementById(before).innerHTML = "&nbsp;";
+                    document.getElementById(before).classList.remove("red", "king");
+                    before = 0;
+                    king = 0;
+                    piece = "";
+                  }
+                  else if(((prevID+18 === thisID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID-9).classList.contains("white"))) || ((prevID+14 === thisID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID-7).classList.contains("white")))){
+                    this.classList.add("red", "king");
+                    this.innerHTML = document.getElementById(before).innerHTML;
+
+                    document.getElementById(thisID-(thisID-prevID)/2).innerHTML = "&nbsp;";
+                    document.getElementById(thisID-(thisID-prevID)/2).classList.remove("white");
+                    if(document.getElementById(thisID-(thisID-prevID)/2).classList.contains("king")){document.getElementById(prevID-(prevID-thisID)/2).classList.remove("king");}
+
+                    document.getElementById(before).innerHTML = "&nbsp;";
+                    document.getElementById(before).classList.remove("red", "king");
+
+                    before = 0;
+                    king = 0;
+                    piece = "";
+                  }
+                }
                 if(((thisID+7 === prevID) && (prevID%size != 0)) || ((thisID+9 === prevID) && (prevID%size != 1))){
+                  this.classList.add("red");
+                  this.innerHTML = document.getElementById(before).innerHTML;
+
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("red");
-                  this.classList.add("red");
-                  this.innerHTML = "<img src='img/checker1.png'/>";
+                  if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king"); this.classList.add("king");}
+
                   before = 0;
                   king = 0;
                   piece = "";
                 }
                 else if(((thisID+14 === prevID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID+7).classList.contains("white"))) || ((thisID+18 === prevID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID+9).classList.contains("white")))){
+                  this.classList.add("red");
+                  this.innerHTML = document.getElementById(before).innerHTML;
+
                   document.getElementById(prevID-(prevID-thisID)/2).innerHTML = "&nbsp;";
                   document.getElementById(prevID-(prevID-thisID)/2).classList.remove("white");
+                  if(document.getElementById(thisID-(thisID-prevID)/2).classList.contains("king")){document.getElementById(prevID-(prevID-thisID)/2).classList.remove("king");}
 
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("red");
-                  this.classList.add("red");
-                  this.innerHTML = "<img src='img/checker1.png'/>";
+                  if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king"); this.classList.add("king");}
+
                   before = 0;
-                  king = 0;
                   piece = "";
+                }
+                if(piece === "" && thisID <= 8 && !  document.getElementById(thisID).classList.contains("king")){
+                  document.getElementById(thisID).classList.add("shrink");
+                  setTimeout(function() {
+                    document.getElementById(thisID).classList.add("king");
+                    document.getElementById(thisID).innerHTML = "<img src='img/king1.png'/>";
+                    document.getElementById(thisID).classList.add("grow");
+                  }, 500);
                 }
               }
               else if(piece == "white"){
+                if(document.getElementById(prevID).classList.contains("king")){
+                  if(((thisID+7 === prevID) && (prevID%size != 0)) || ((thisID+9 === prevID) && (prevID%size != 1))){
+                    this.classList.add("white", "king");
+                    this.innerHTML = document.getElementById(before).innerHTML;
+
+                    document.getElementById(before).innerHTML = "&nbsp;";
+                    document.getElementById(before).classList.remove("white", "king");
+
+                    before = 0;
+                    king = 0;
+                    piece = "";
+                  }
+                  else if(((thisID+14 === prevID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID+7).classList.contains("red"))) || ((thisID+18 === prevID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID+9).classList.contains("red")))){
+                    this.classList.add("white", "king");
+                    this.innerHTML = document.getElementById(before).innerHTML;
+
+                    document.getElementById(prevID-(prevID-thisID)/2).innerHTML = "&nbsp;";
+                    document.getElementById(prevID-(prevID-thisID)/2).classList.remove("red");
+                    if(document.getElementById(prevID-(prevID-thisID)/2).classList.contains("king")){document.getElementById(prevID-(prevID-thisID)/2).classList.remove("king");}
+
+                    document.getElementById(before).innerHTML = "&nbsp;";
+                    document.getElementById(before).classList.remove("white", "king");
+
+                    before = 0;
+                    piece = "";
+                  }
+                }
                 if(((prevID+7 === thisID) && (prevID%size != 1)) || ((prevID+9 === thisID) && (prevID%size != 0))){
+                  this.classList.add("white");
+                  this.innerHTML = document.getElementById(before).innerHTML;
+
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("white");
-                  this.classList.add("white");
-                  this.innerHTML = "<img src='img/checker2.png'/>";
+                  if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king");this.classList.add("king");}
+
                   before = 0;
                   king = 0;
                   piece = "";
                 }
-                else if(((prevID+14 === thisID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID-7).classList.contains("red"))) || ((prevID+18 === thisID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID-9).classList.contains("red")))){
+                else if(((prevID+18 === thisID) && (prevID%size != 0 && prevID%size != 7) && (document.getElementById(thisID-9).classList.contains("red"))) || ((prevID+14 === thisID) && (prevID%size != 1 && prevID%size != 2) && (document.getElementById(thisID-7).classList.contains("red")))){
+                  this.classList.add("white");
+                  this.innerHTML = document.getElementById(before).innerHTML;
+
                   document.getElementById(thisID-(thisID-prevID)/2).innerHTML = "&nbsp;";
                   document.getElementById(thisID-(thisID-prevID)/2).classList.remove("red");
+                  if(document.getElementById(prevID-(prevID-thisID)/2).classList.contains("king")){document.getElementById(prevID-(prevID-thisID)/2).classList.remove("king");}
 
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("white");
-                  this.classList.add("white");
-                  this.innerHTML = "<img src='img/checker2.png'/>";
+                  if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king"); this.classList.add("king");}
                   before = 0;
                   king = 0;
                   piece = "";
+                }
+                if(piece === "" && thisID >= 57 && !document.getElementById(thisID).classList.contains("king")){
+                  document.getElementById(thisID).classList.add("shrink");
+                  setTimeout(function() {
+                    document.getElementById(thisID).classList.add("king");
+                    document.getElementById(thisID).innerHTML = "<img src='img/king2.png'/>";
+                    document.getElementById(thisID).classList.add("grow");
+                  }, 500);
                 }
               }
             }

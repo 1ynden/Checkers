@@ -118,7 +118,7 @@
     </style>
   </head>
 
-  <body>
+  <body id="body">
     <nav id="main-nav" class="topnav">
 
     </nav>
@@ -190,6 +190,11 @@
                     document.getElementById(before).innerHTML = "&nbsp;";
                     document.getElementById(before).classList.remove("red", "king");
 
+                    document.getElementById("body").classList.add("shake");
+                    setTimeout(function() {
+                      document.getElementById("body").classList.remove("shake");
+                    }, 500);
+
                     before = 0;
                     king = 0;
                     piece = "";
@@ -218,6 +223,11 @@
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("red");
                   if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king"); this.classList.add("king");}
+
+                  document.getElementById("body").classList.add("shake");
+                  setTimeout(function() {
+                    document.getElementById("body").classList.remove("shake");
+                  }, 500);
 
                   before = 0;
                   piece = "";
@@ -255,6 +265,11 @@
                     document.getElementById(before).innerHTML = "&nbsp;";
                     document.getElementById(before).classList.remove("white", "king");
 
+                    document.getElementById("body").classList.add("shake");
+                    setTimeout(function() {
+                      document.getElementById("body").classList.remove("shake");
+                    }, 500);
+
                     before = 0;
                     piece = "";
                   }
@@ -282,6 +297,12 @@
                   document.getElementById(before).innerHTML = "&nbsp;";
                   document.getElementById(before).classList.remove("white");
                   if(document.getElementById(before).classList.contains("king")){document.getElementById(before).classList.remove("king"); this.classList.add("king");}
+
+                  document.getElementById("body").classList.add("shake");
+                  setTimeout(function() {
+                    document.getElementById("body").classList.remove("shake");
+                  }, 500);
+
                   before = 0;
                   king = 0;
                   piece = "";
